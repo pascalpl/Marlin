@@ -2,8 +2,8 @@
 #define ULTRA_LCD_IMPLEMENTATION_HITACHI_HD44780_H
 
 /**
-* Implementation of the LCD display routines for a Hitachi HD44780 display. These are common LCD character displays.
-* When selecting the Russian language, a slightly different LCD implementation is used to handle UTF8 characters.
+* Implementation of the LCD display routines for a hitachi HD44780 display. These are common LCD character displays.
+* When selecting the rusian language, a slightly different LCD implementation is used to handle UTF8 characters.
 **/
 
 #ifndef REPRAPWORLD_KEYPAD
@@ -20,7 +20,7 @@ extern volatile uint16_t buttons;  //an extended version of the last checked but
 // via a shift/i2c register.
 
 #ifdef ULTIPANEL
-// All UltiPanels might have an encoder - so this is always be mapped onto first two bits
+// All Ultipanels might have an encoder - so this is always be mapped onto first two bits
 #define BLEN_B 1
 #define BLEN_A 0
 
@@ -434,8 +434,9 @@ static void lcd_implementation_status_screen()
 #if LCD_HEIGHT > 2
 //Lines 2 for 4 line LCD
 # if LCD_WIDTH < 20
+
 #  ifdef SDSUPPORT
-    lcd.setCursor(0, 2);
+    lcd.setCursor(0, 1);
     lcd_printPGM(PSTR("SD"));
     if (IS_SD_PRINTING)
         lcd.print(itostr3(card.percentDone()));
@@ -443,6 +444,7 @@ static void lcd_implementation_status_screen()
         lcd_printPGM(PSTR("---"));
     lcd.print('%');
 #  endif//SDSUPPORT
+
 # else//LCD_WIDTH > 19
 #  if EXTRUDERS > 1 && TEMP_SENSOR_BED != 0
     //If we both have a 2nd extruder and a heated bed, show the heated bed temp on the 2nd line on the left, as the first line is filled with extruder temps
@@ -465,28 +467,33 @@ static void lcd_implementation_status_screen()
     lcd.print(ftostr3(current_position[Y_AXIS]));
 #  endif//EXTRUDERS > 1 || TEMP_SENSOR_BED != 0
 # endif//LCD_WIDTH > 19
+//tutaj zmieniałem
     lcd.setCursor(LCD_WIDTH - 8, 1);
     lcd.print('Z');
     lcd.print(ftostr32(current_position[Z_AXIS]));
 #endif//LCD_HEIGHT > 2
 
 #if LCD_HEIGHT > 3
-    lcd.setCursor(0, 2);
+//tutaj zmieniałem
+    lcd.setCursor(-4, 2);
     lcd.print(LCD_STR_FEEDRATE[0]);
     lcd.print(itostr3(feedmultiply));
     lcd.print('%');
 # if LCD_WIDTH > 19
 #  ifdef SDSUPPORT
-    lcd.setCursor(7, 2);
+//tutaj zmieniałem
+/*
+    lcd.setCursor(3, 2);
     lcd_printPGM(PSTR("SD"));
     if (IS_SD_PRINTING)
         lcd.print(itostr3(card.percentDone()));
     else
         lcd_printPGM(PSTR("---"));
     lcd.print('%');
+*/
 #  endif//SDSUPPORT
 # endif//LCD_WIDTH > 19
-    lcd.setCursor(LCD_WIDTH - 6, 2);
+    lcd.setCursor(LCD_WIDTH - 10, 2);
     lcd.print(LCD_STR_CLOCK[0]);
     if(starttime != 0)
     {
@@ -500,7 +507,8 @@ static void lcd_implementation_status_screen()
 #endif
 
     //Status message line on the last line
-    lcd.setCursor(0, LCD_HEIGHT - 1);
+	//tutaj zmieniłem
+    lcd.setCursor(-4, LCD_HEIGHT - 1);
     lcd.print(lcd_status_message);
 }
 static void lcd_implementation_drawmenu_generic(uint8_t row, const char* pstr, char pre_char, char post_char)
@@ -512,7 +520,11 @@ static void lcd_implementation_drawmenu_generic(uint8_t row, const char* pstr, c
     #else
       uint8_t n = LCD_WIDTH - 1 - 2;
   #endif
-    lcd.setCursor(0, row);
+    if (row < 1) {
+		lcd.setCursor(0, row);
+	} else {
+		lcd.setCursor(-4, row);
+	}
     lcd.print(pre_char);
     while( ((c = pgm_read_byte(pstr)) != '\0') && (n>0) )
     {
@@ -534,7 +546,11 @@ static void lcd_implementation_drawmenu_setting_edit_generic(uint8_t row, const 
     #else
       uint8_t n = LCD_WIDTH - 1 - 2 - strlen(data);
   #endif
-    lcd.setCursor(0, row);
+    if (row < 1) {
+		lcd.setCursor(0, row);
+	} else {
+		lcd.setCursor(-4, row);
+	}
     lcd.print(pre_char);
     while( ((c = pgm_read_byte(pstr)) != '\0') && (n>0) )
     {
@@ -556,7 +572,11 @@ static void lcd_implementation_drawmenu_setting_edit_generic_P(uint8_t row, cons
     #else
       uint8_t n = LCD_WIDTH - 1 - 2 - strlen_P(data);
   #endif
-    lcd.setCursor(0, row);
+    if (row < 1) {
+		lcd.setCursor(0, row);
+	} else {
+		lcd.setCursor(-4, row);
+	}
     lcd.print(pre_char);
     while( ((c = pgm_read_byte(pstr)) != '\0') && (n>0) )
     {
@@ -621,7 +641,11 @@ static void lcd_implementation_drawmenu_sdfile_selected(uint8_t row, const char*
 {
     char c;
     uint8_t n = LCD_WIDTH - 1;
-    lcd.setCursor(0, row);
+    if (row < 1) {
+		lcd.setCursor(0, row);
+	} else {
+		lcd.setCursor(-4, row);
+	}
     lcd.print('>');
     if (longFilename[0] != '\0')
     {
@@ -641,7 +665,11 @@ static void lcd_implementation_drawmenu_sdfile(uint8_t row, const char* pstr, co
 {
     char c;
     uint8_t n = LCD_WIDTH - 1;
-    lcd.setCursor(0, row);
+    if (row < 1) {
+		lcd.setCursor(0, row);
+	} else {
+		lcd.setCursor(-4, row);
+	}
     lcd.print(' ');
     if (longFilename[0] != '\0')
     {
@@ -661,7 +689,11 @@ static void lcd_implementation_drawmenu_sddirectory_selected(uint8_t row, const 
 {
     char c;
     uint8_t n = LCD_WIDTH - 2;
-    lcd.setCursor(0, row);
+    if (row < 1) {
+		lcd.setCursor(0, row);
+	} else {
+		lcd.setCursor(-4, row);
+	}
     lcd.print('>');
     lcd.print(LCD_STR_FOLDER[0]);
     if (longFilename[0] != '\0')
@@ -682,7 +714,11 @@ static void lcd_implementation_drawmenu_sddirectory(uint8_t row, const char* pst
 {
     char c;
     uint8_t n = LCD_WIDTH - 2;
-    lcd.setCursor(0, row);
+    if (row < 1) {
+		lcd.setCursor(0, row);
+	} else {
+		lcd.setCursor(-4, row);
+	}
     lcd.print(' ');
     lcd.print(LCD_STR_FOLDER[0]);
     if (longFilename[0] != '\0')
@@ -711,14 +747,9 @@ static void lcd_implementation_drawmenu_sddirectory(uint8_t row, const char* pst
 static void lcd_implementation_quick_feedback()
 {
 #ifdef LCD_USE_I2C_BUZZER
-	#if !defined(LCD_FEEDBACK_FREQUENCY_HZ) || !defined(LCD_FEEDBACK_FREQUENCY_DURATION_MS)
-	  lcd_buzz(1000/6,100);
-	#else
-	  lcd_buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS,LCD_FEEDBACK_FREQUENCY_HZ);
-	#endif
+    lcd.buzz(60,1000/6);
 #elif defined(BEEPER) && BEEPER > -1
     SET_OUTPUT(BEEPER);
-	#if !defined(LCD_FEEDBACK_FREQUENCY_HZ) || !defined(LCD_FEEDBACK_FREQUENCY_DURATION_MS)
     for(int8_t i=0;i<10;i++)
     {
       WRITE(BEEPER,HIGH);
@@ -726,15 +757,6 @@ static void lcd_implementation_quick_feedback()
       WRITE(BEEPER,LOW);
       delayMicroseconds(100);
     }
-    #else
-    for(int8_t i=0;i<(LCD_FEEDBACK_FREQUENCY_DURATION_MS / (1000 / LCD_FEEDBACK_FREQUENCY_HZ));i++)
-    {
-      WRITE(BEEPER,HIGH);
-      delayMicroseconds(1000000 / LCD_FEEDBACK_FREQUENCY_HZ / 2);
-      WRITE(BEEPER,LOW);
-      delayMicroseconds(1000000 / LCD_FEEDBACK_FREQUENCY_HZ / 2);
-    }
-    #endif
 #endif
 }
 
